@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aeron X — Electric Vehicles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="main.css"/>
+  <link rel="stylesheet" href="pages.css"/>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-logo"><svg viewBox="0 0 24 24" fill="currentColor" height="20" width="20"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Aeron X</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Vehicles</a></li>
+      <li><a href="energy.html">Energy</a></li>
+      <li><a href="charging.html">Charging</a></li>
+      <li><a href="discover.html">Discover</a></li>
+      <li><a href="shop.html">Shop</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="signin.html" class="nav-btn">Sign In</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg">
+        <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1800&q=90" alt="Aeron X Electric Vehicle" loading="eager"/>
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <h1>Drive the Future</h1>
+        <p>Experience electric performance, reimagined.</p>
+        <a href="#vehicles" class="btn-primary">Explore Vehicles</a>
+      </div>
+    </section>
+
+    <!-- Vehicles Grid -->
+    <section id="vehicles" class="vehicles-section">
+      <h2 class="section-title">Our Vehicles</h2>
+      <div class="vehicles-grid" id="vehiclesGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 Aeron X Motors · All Rights Reserved</p>
+  </footer>
+
+  <script src="home.js"></script>
+  <script>
+    const _io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); _io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    // hero content reveal
+    document.querySelectorAll('.hero-content > *').forEach((el, i) => {
+      el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+      el.style.transition = `opacity .6s ${i * 0.15}s ease, transform .6s ${i * 0.15}s ease`;
+      setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 100);
+    });
+  </script>
+  <script>
+    const _rio = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); _rio.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => _rio.observe(el));
+  </script>
+</body>
+</html>

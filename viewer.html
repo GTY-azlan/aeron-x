@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aeron X — 3D Configurator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="main.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body class="viewer-page">
+
+  <!-- Top bar -->
+  <header class="viewer-header">
+    <a href="index.html" class="back-btn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </a>
+    <a href="index.html" class="viewer-brand">
+      <span class="brand-logo" style="font-size:.95rem;letter-spacing:.1em"><svg viewBox="0 0 24 24" fill="currentColor" height="18" width="18"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Aeron X</span>
+    </a>
+    <span class="viewer-model-name">Model Y</span>
+    <button class="fullscreen-btn" id="fullscreenBtn" aria-label="Fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+  </header>
+
+  <!-- Split layout -->
+  <div class="viewer-layout">
+
+    <!-- LEFT: 3D Canvas -->
+    <div class="canvas-side" id="canvasSide">
+      <canvas id="c3d"></canvas>
+
+      <!-- Loading overlay -->
+      <div class="loader" id="loader">
+        <div class="loader-ring"></div>
+        <p>Building Model Y…</p>
+      </div>
+
+      <!-- Camera presets -->
+      <div class="camera-presets" id="cameraPresets">
+        <button class="preset-btn active" data-preset="default" aria-label="Default view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Default</span>
+        </button>
+        <button class="preset-btn" data-preset="front" aria-label="Front view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+          <span>Front</span>
+        </button>
+        <button class="preset-btn" data-preset="side" aria-label="Side view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="16" cy="17" r="3"/><circle cx="7" cy="17" r="3"/></svg>
+          <span>Side</span>
+        </button>
+        <button class="preset-btn" data-preset="rear" aria-label="Rear view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 14h18"/></svg>
+          <span>Rear</span>
+        </button>
+        <button class="preset-btn" data-preset="top" aria-label="Top view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="12" rx="10" ry="4"/></svg>
+          <span>Top</span>
+        </button>
+        <button class="preset-btn" data-preset="interior" aria-label="Interior view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Interior</span>
+        </button>
+      </div>
+
+      <p class="canvas-hint">Drag to rotate · Scroll to zoom · Right-drag to pan</p>
+
+      <div class="autorotate-badge" id="autoRotateBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Auto-rotating
+      </div>
+    </div>
+
+    <!-- RIGHT: Info Panel -->
+    <aside class="info-panel" id="infoPanel">
+      <div class="panel-scroll">
+
+        <div class="panel-header">
+          <p class="panel-eyebrow" id="panelEyebrow">2024 · Performance AWD</p>
+          <h1 class="panel-title" id="panelTitle">Model Y</h1>
+          <p class="panel-tagline" id="panelTagline">The world's best-selling electric vehicle.</p>
+          <p class="panel-price" id="panelPrice">From $43,990</p>
+        </div>
+
+        <!-- Specs -->
+        <div class="specs-row" id="specsRow">
+          <div class="spec-item">
+            <span class="spec-val" id="specRange">533<small>km</small></span>
+            <span class="spec-key">Range</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-val" id="specAccel">3.7<small>s</small></span>
+            <span class="spec-key">0–100 km/h</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-val" id="specTop">250<small>km/h</small></span>
+            <span class="spec-key">Top Speed</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-val" id="specDrive">AWD</span>
+            <span class="spec-key">Drivetrain</span>
+          </div>
+        </div>
+
+        <!-- Part highlights -->
+        <div class="config-section">
+          <h3 class="config-title">Highlight Part</h3>
+          <div class="part-btns">
+            <button class="part-btn" data-part="wheels">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+              Wheels
+            </button>
+            <button class="part-btn" data-part="lights">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              Lights
+            </button>
+            <button class="part-btn" data-part="glass">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Glass
+            </button>
+            <button class="part-btn" data-part="none">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic view context -->
+        <div class="view-context" id="viewContext"></div>
+
+        <!-- Color selector -->
+        <div class="config-section">
+          <h3 class="config-title">Exterior Color</h3>
+          <div class="color-grid" id="colorGrid">
+            <button class="color-swatch active" data-hex="#1a1a1a" data-name="Midnight Black" style="background:#1a1a1a" aria-label="Midnight Black"></button>
+            <button class="color-swatch" data-hex="#f5f5f0" data-name="Pearl White" style="background:#f5f5f0;border-color:#ccc" aria-label="Pearl White"></button>
+            <button class="color-swatch" data-hex="#8c1515" data-name="Deep Crimson" style="background:#8c1515" aria-label="Deep Crimson"></button>
+            <button class="color-swatch" data-hex="#2c3e6b" data-name="Midnight Blue" style="background:#2c3e6b" aria-label="Midnight Blue"></button>
+            <button class="color-swatch" data-hex="#6b7280" data-name="Quicksilver" style="background:#6b7280" aria-label="Quicksilver"></button>
+          </div>
+          <p class="color-name" id="colorName">Midnight Black</p>
+        </div>
+
+        <!-- Features accordion -->
+        <div class="features-list">
+
+          <details class="feat-group" open>
+            <summary class="feat-summary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/></svg>
+              Smart Features
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <ul class="feat-items">
+              <li>Autopilot — advanced driver assistance</li>
+              <li>Sentry Mode — 360° security monitoring</li>
+              <li>Over-the-air software updates</li>
+              <li>Mobile app remote control</li>
+            </ul>
+          </details>
+
+          <details class="feat-group">
+            <summary class="feat-summary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Interior
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <ul class="feat-items">
+              <li>16-inch central touchscreen</li>
+              <li>Panoramic glass roof</li>
+              <li>Minimalist, vegan interior</li>
+              <li>Seating for 5 passengers</li>
+            </ul>
+          </details>
+
+          <details class="feat-group">
+            <summary class="feat-summary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Performance
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <ul class="feat-items">
+              <li>Instant torque from 0 RPM</li>
+              <li>Dual motor all-wheel drive</li>
+              <li>Regenerative braking</li>
+              <li>Track Mode (Performance)</li>
+            </ul>
+          </details>
+
+          <details class="feat-group">
+            <summary class="feat-summary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+              Charging
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <ul class="feat-items">
+              <li>Supercharger V3 — up to 250 kW</li>
+              <li>Add 270 km in 15 minutes</li>
+              <li>Home charging via Wall Connector</li>
+              <li>45,000+ Superchargers worldwide</li>
+            </ul>
+          </details>
+
+        </div>
+
+        <a href="#" class="order-btn">Order Now</a>
+
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="viewer.js"></script>
+  <script>
+  // Car data keyed by ?car= param
+  const CAR_DATA = {
+    modely: {
+      eyebrow: '2024 · Performance AWD', title: 'Model Y', tagline: "The world's best-selling electric vehicle. Versatile SUV with room for 7 and a panoramic glass roof.", price: 'From $43,990',
+      range: '533<small>km</small>', accel: '3.7<small>s</small>', top: '250<small>km/h</small>', drive: 'AWD',
+      bodyColor: 0x1a1a1a
+    },
+    model3: {
+      eyebrow: '2024 · Long Range AWD', title: 'Model 3', tagline: "The most affordable Tesla. A sleek sedan with class-leading range and a minimalist 15.4\" interior.", price: 'From $32,740',
+      range: '602<small>km</small>', accel: '4.4<small>s</small>', top: '225<small>km/h</small>', drive: 'AWD',
+      bodyColor: 0xf5f5f0
+    },
+    models: {
+      eyebrow: '2024 · Plaid Tri-Motor', title: 'Model S', tagline: "The pinnacle of Tesla engineering. Luxury sedan with a 17\" cinematic display and record-breaking performance.", price: 'From $74,990',
+      range: '637<small>km</small>', accel: '2.1<small>s</small>', top: '322<small>km/h</small>', drive: 'Tri-AWD',
+      bodyColor: 0x2c2c2c
+    },
+    modelx: {
+      eyebrow: '2024 · Plaid Tri-Motor', title: 'Model X', tagline: "The ultimate family SUV. Falcon Wing doors, seating for 7, and the largest windshield of any production car.", price: 'From $79,990',
+      range: '547<small>km</small>', accel: '2.6<small>s</small>', top: '262<small>km/h</small>', drive: 'Tri-AWD',
+      bodyColor: 0xffffff
+    },
+    cybertruck: {
+      eyebrow: '2024 · All-Wheel Drive', title: 'Cybertruck', tagline: "Ultra-hard stainless steel exoskeleton. Built for utility and performance unlike anything before it.", price: 'From $60,990',
+      range: '547<small>km</small>', accel: '4.1<small>s</small>', top: '209<small>km/h</small>', drive: 'AWD',
+      bodyColor: 0xcccccc
+    },
+    roadster: {
+      eyebrow: '2025 · Next-Gen', title: 'Roadster', tagline: "The quickest car ever made. Sub-2-second 0–100 and over 1,000 km of range.", price: 'From $200,000',
+      range: '1000<small>km</small>', accel: '1.9<small>s</small>', top: '400+<small>km/h</small>', drive: 'AWD',
+      bodyColor: 0x8c1515
+    }
+  };
+
+  const param = new URLSearchParams(location.search).get('car') || 'modely';
+  const d = CAR_DATA[param] || CAR_DATA.modely;
+
+  document.getElementById('panelEyebrow').textContent = d.eyebrow;
+  document.getElementById('panelTitle').textContent   = d.title;
+  document.getElementById('panelTagline').textContent = d.tagline;
+  document.getElementById('panelPrice').textContent   = d.price;
+  document.getElementById('specRange').innerHTML  = d.range;
+  document.getElementById('specAccel').innerHTML  = d.accel;
+  document.getElementById('specTop').innerHTML    = d.top;
+  document.getElementById('specDrive').textContent = d.drive;
+  document.querySelector('.viewer-model-name').textContent = d.title;
+  document.title = `Tesla ${d.title} — Configurator`;
+
+  // Pass initial body color to viewer via global
+  window.INITIAL_CAR_COLOR = d.bodyColor;
+  </script>
+</body>
+</html>

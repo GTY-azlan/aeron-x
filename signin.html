@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aeron X — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="main.css"/>
+  <link rel="stylesheet" href="pages.css"/>
+</head>
+<body class="signin-page">
+  <a href="index.html" class="signin-logo">
+    <span class="brand-logo" style="font-size:1.4rem;gap:10px"><svg viewBox="0 0 24 24" fill="currentColor" height="26" width="26"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Aeron X</span>
+  </a>
+
+  <div class="signin-card">
+    <h2>Sign In</h2>
+    <p class="signin-sub">Access your Aeron X account</p>
+
+    <form class="signin-form" onsubmit="return false">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="name@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="signin-submit">Sign In</button>
+    </form>
+
+    <div class="signin-divider"><span>or</span></div>
+
+    <button class="signin-alt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+      Continue with Phone Number
+    </button>
+
+    <p class="signin-footer">
+      Don't have an account? <a href="#">Create one</a>
+    </p>
+    <p class="signin-footer"><a href="#">Forgot password?</a></p>
+  </div>
+</body>
+</html>
