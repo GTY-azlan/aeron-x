@@ -8,8 +8,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="main.css"/>
   <link rel="stylesheet" href="pages.css"/>
+  <link rel="stylesheet" href="cinematic.css"/>
 </head>
 <body>
+
+  <!-- ── Intro / Experience Screen ── -->
+  <div id="intro-screen">
+    <div class="intro-logo">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Aeron X
+    </div>
+    <p class="intro-tagline">The Future of Electric</p>
+    <button class="intro-start-btn">Start Experience</button>
+    <div class="intro-progress"></div>
+  </div>
 
   <nav class="nav">
     <a href="index.html" class="nav-brand">
@@ -28,20 +40,75 @@
   </nav>
 
   <main>
-    <!-- Hero -->
+    <!-- ── Cinematic Hero ── -->
     <section class="hero">
       <div class="hero-bg">
         <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1800&q=90" alt="Aeron X Electric Vehicle" loading="eager"/>
         <div class="hero-overlay"></div>
       </div>
       <div class="hero-content">
+        <span class="hero-eyebrow">The Future is Electric</span>
         <h1>Drive the Future</h1>
         <p>Experience electric performance, reimagined.</p>
         <a href="#vehicles" class="btn-primary">Explore Vehicles</a>
       </div>
     </section>
 
-    <!-- Vehicles Grid -->
+    <!-- ── Scroll Story: Performance ── -->
+    <section class="story-section" style="background:var(--bg);">
+      <div class="story-text">
+        <span class="story-eyebrow">Unmatched Performance</span>
+        <h2 class="story-title">0 to 100<br/>in 2.1 seconds.</h2>
+        <p class="story-body">Three motors. One mission. The Model S Plaid rewrites the laws of physics with instant torque from every wheel, delivering supercar acceleration in a family sedan.</p>
+        <div class="story-specs">
+          <div>
+            <span class="story-spec-val" data-count="637" data-suffix="km">637km</span>
+            <span class="story-spec-key">Range</span>
+          </div>
+          <div>
+            <span class="story-spec-val" data-count="2.1" data-suffix="s">2.1s</span>
+            <span class="story-spec-key">0–100 km/h</span>
+          </div>
+          <div>
+            <span class="story-spec-val" data-count="322" data-suffix="km/h">322km/h</span>
+            <span class="story-spec-key">Top Speed</span>
+          </div>
+        </div>
+        <a href="viewer.html?car=models" class="btn-primary">View Model S</a>
+      </div>
+      <div class="story-img">
+        <img src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Mega-Menu-Vehicles-Model-S.png"
+             onerror="this.src='https://images.unsplash.com/photo-1536700503339-1e4b06520771?w=900&q=85'"
+             alt="Model S Plaid" loading="lazy"/>
+      </div>
+    </section>
+
+    <!-- ── Scroll Story: Range ── -->
+    <section class="story-section" style="background:var(--bg2);">
+      <div class="story-img" style="order:-1">
+        <img src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Mega-Menu-Vehicles-Model-Y.png"
+             onerror="this.src='https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=85'"
+             alt="Model Y" loading="lazy"/>
+      </div>
+      <div class="story-text" style="margin-left:auto">
+        <span class="story-eyebrow">World's Best-Selling EV</span>
+        <h2 class="story-title">Go further.<br/>Every time.</h2>
+        <p class="story-body">Model Y combines SUV versatility with class-leading efficiency. A panoramic roof, seating for 7, and 533 km of range — all in one vehicle.</p>
+        <div class="story-specs">
+          <div>
+            <span class="story-spec-val" data-count="533" data-suffix="km">533km</span>
+            <span class="story-spec-key">Range</span>
+          </div>
+          <div>
+            <span class="story-spec-val" data-count="7" data-suffix="">7</span>
+            <span class="story-spec-key">Seats</span>
+          </div>
+        </div>
+        <a href="viewer.html?car=modely" class="btn-primary">Configure Model Y</a>
+      </div>
+    </section>
+
+    <!-- ── Vehicles Grid ── -->
     <section id="vehicles" class="vehicles-section">
       <h2 class="section-title">Our Vehicles</h2>
       <div class="vehicles-grid" id="vehiclesGrid"></div>
@@ -52,23 +119,48 @@
     <p>© 2024 Aeron X Motors · All Rights Reserved</p>
   </footer>
 
+  <!-- Particle canvas background -->
+  <canvas id="particleBg" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35"></canvas>
+
+  <!-- Black flash overlay for scene cut -->
+  <div id="sceneFlash" style="position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:7000;transition:opacity .15s"></div>
+
+  <script src="sounds.js"></script>
   <script src="home.js"></script>
+  <script src="cinematic.js"></script>
   <script>
-    const _io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); _io.unobserve(e.target); } });
-    }, { threshold: 0.08 });
-    // hero content reveal
-    document.querySelectorAll('.hero-content > *').forEach((el, i) => {
-      el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
-      el.style.transition = `opacity .6s ${i * 0.15}s ease, transform .6s ${i * 0.15}s ease`;
-      setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 100);
-    });
-  </script>
-  <script>
-    const _rio = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); _rio.unobserve(e.target); } });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(el => _rio.observe(el));
+  // ── Particle background ──
+  (function(){
+    const c = document.getElementById('particleBg');
+    const ctx = c.getContext('2d');
+    let W, H, pts = [];
+    function resize(){ W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for(let i=0;i<80;i++) pts.push({ x:Math.random()*2000, y:Math.random()*1200, vx:(Math.random()-.5)*.15, vy:(Math.random()-.5)*.15, r:Math.random()*1.2+.3, o:Math.random()*.5+.1 });
+    (function loop(){
+      requestAnimationFrame(loop);
+      ctx.clearRect(0,0,W,H);
+      pts.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+        if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(62,155,255,${p.o})`; ctx.fill();
+      });
+    })();
+  })();
+
+  // ── Scene cut on View in 3D click ──
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-view3d');
+    if (!btn) return;
+    e.preventDefault();
+    if (window.SFX) window.SFX.engineRev();
+    const flash = document.getElementById('sceneFlash');
+    flash.style.transition = 'opacity .12s';
+    flash.style.opacity = '1';
+    setTimeout(() => { window.location.href = btn.href; }, 180);
+  });
   </script>
 </body>
 </html>

@@ -79,8 +79,11 @@ const CARS = [
 function renderGrid() {
   const grid = document.getElementById('vehiclesGrid');
   grid.innerHTML = CARS.map(car => `
-    <div class="vehicle-card" data-id="${car.id}">
-      <img src="${car.imgFallback}" alt="${car.name}" loading="lazy"/>
+    <div class="vehicle-card" data-id="${car.id}" style="opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)">
+      <img src="${car.imgFallback}" alt="${car.name}" loading="lazy"
+           onerror="this.src='${car.imgFallback}'"
+           style="opacity:0;transition:opacity .5s ease"
+           onload="this.style.opacity='1'"/>
       <div class="card-body">
         <p class="card-badge">${car.badge}</p>
         <h3 class="card-name">${car.name}</h3>
@@ -100,22 +103,18 @@ function renderGrid() {
 }
 
 function initReveal() {
-  const cards = document.querySelectorAll('.vehicle-card');
-  const all = [...cards];
-  cards.forEach(c => {
-    c.style.opacity = '0';
-    c.style.transform = 'translateY(28px)';
-    c.style.transition = 'opacity .6s ease, transform .6s ease';
-  });
+  const cards = [...document.querySelectorAll('.vehicle-card')];
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        const i = all.indexOf(e.target);
-        setTimeout(() => { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; }, 80 * i);
-        io.unobserve(e.target);
-      }
+      if (!e.isIntersecting) return;
+      const i = cards.indexOf(e.target);
+      setTimeout(() => {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }, i * 90);
+      io.unobserve(e.target);
     });
-  }, { threshold: 0.08 });
+  }, { threshold: 0.06 });
   cards.forEach(c => io.observe(c));
 }
 

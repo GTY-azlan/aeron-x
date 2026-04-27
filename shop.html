@@ -118,25 +118,111 @@
 
   <footer class="footer"><p>© 2024 Aeron X Motors · All Rights Reserved</p></footer>
 
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" style="position:fixed;top:0;right:-380px;width:360px;height:100vh;background:#0d0d0d;border-left:1px solid rgba(255,255,255,.08);z-index:500;display:flex;flex-direction:column;transition:right .4s cubic-bezier(.16,1,.3,1);padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <h3 style="font-size:1rem;font-weight:600;letter-spacing:.04em">Your Cart</h3>
+      <button id="closeCart" style="background:none;border:none;color:#888;cursor:pointer;font-size:1.4rem;line-height:1">×</button>
+    </div>
+    <div id="cartItems" style="flex:1;overflow-y:auto"></div>
+    <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:16px;margin-top:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:.9rem">
+        <span style="color:#888">Total</span>
+        <span id="cartTotal" style="font-weight:700">$0</span>
+      </div>
+      <button style="width:100%;padding:13px;background:#f5f5f5;color:#000;border:none;font-size:.82rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:.06em">Checkout</button>
+    </div>
+  </div>
+  <div id="cartBackdrop" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:499;opacity:0;pointer-events:none;transition:opacity .3s"></div>
+
+  <!-- Cart badge in nav -->
+  <style>
+    .cart-fab{position:fixed;bottom:28px;right:28px;z-index:400;width:52px;height:52px;border-radius:50%;background:#e82127;border:none;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;box-shadow:0 4px 20px rgba(232,33,39,.4);transition:transform .2s}
+    .cart-fab:hover{transform:scale(1.1)}
+    .cart-fab svg{width:18px;height:18px}
+    .cart-count{font-size:.65rem;font-weight:700;min-width:16px;text-align:center}
+  </style>
+  <button class="cart-fab" id="cartFab" aria-label="Open cart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+
   <script>
-    // Filter
+    // ── Cart state ──
+    const cart = {};
+    const PRODUCTS = {};
+    document.querySelectorAll('.shop-card').forEach(card => {
+      const name  = card.querySelector('h4').textContent;
+      const price = parseInt(card.querySelector('.shop-price').textContent.replace(/\D/g,''));
+      PRODUCTS[name] = price;
+    });
+
+    function openCart()  { document.getElementById('cartDrawer').style.right='0'; document.getElementById('cartBackdrop').style.cssText+='opacity:1;pointer-events:all'; }
+    function closeCart() { document.getElementById('cartDrawer').style.right='-380px'; document.getElementById('cartBackdrop').style.cssText+='opacity:0;pointer-events:none'; }
+
+    document.getElementById('cartFab').addEventListener('click', openCart);
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    document.getElementById('cartBackdrop').addEventListener('click', closeCart);
+
+    function renderCart() {
+      const items = document.getElementById('cartItems');
+      const keys = Object.keys(cart).filter(k => cart[k] > 0);
+      if (!keys.length) { items.innerHTML = '<p style="color:#555;font-size:.82rem;text-align:center;margin-top:40px">Your cart is empty</p>'; }
+      else {
+        items.innerHTML = keys.map(name => `
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="flex:1">
+              <div style="font-size:.82rem;font-weight:500;margin-bottom:2px">${name}</div>
+              <div style="font-size:.75rem;color:#888">$${PRODUCTS[name].toLocaleString()} × ${cart[name]}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button onclick="updateCart('${name}',-1)" style="width:22px;height:22px;background:rgba(255,255,255,.08);border:none;color:#fff;cursor:pointer;font-size:.9rem;border-radius:2px">−</button>
+              <span style="font-size:.82rem;min-width:16px;text-align:center">${cart[name]}</span>
+              <button onclick="updateCart('${name}',1)"  style="width:22px;height:22px;background:rgba(255,255,255,.08);border:none;color:#fff;cursor:pointer;font-size:.9rem;border-radius:2px">+</button>
+            </div>
+          </div>`).join('');
+      }
+      const total = keys.reduce((s,k) => s + PRODUCTS[k]*cart[k], 0);
+      document.getElementById('cartTotal').textContent = '$' + total.toLocaleString();
+      const count = keys.reduce((s,k) => s + cart[k], 0);
+      document.getElementById('cartCount').textContent = count;
+      document.getElementById('cartFab').style.background = count ? '#e82127' : '#333';
+    }
+
+    function updateCart(name, delta) {
+      cart[name] = (cart[name] || 0) + delta;
+      if (cart[name] <= 0) delete cart[name];
+      renderCart();
+    }
+
+    document.querySelectorAll('.shop-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.closest('.shop-card').querySelector('h4').textContent;
+        updateCart(name, 1);
+        btn.textContent = '✓ Added';
+        setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1200);
+        openCart();
+      });
+    });
+
+    // ── Filter ──
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const f = btn.dataset.filter;
         document.querySelectorAll('.shop-card').forEach(card => {
-          const show = f === 'all' || card.dataset.cat === f;
-          card.style.display = show ? '' : 'none';
+          card.style.display = (f === 'all' || card.dataset.cat === f) ? '' : 'none';
         });
       });
     });
 
-    // Scroll reveal
+    // ── Scroll reveal ──
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    renderCart();
   </script>
 
 </body>

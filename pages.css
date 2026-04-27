@@ -141,3 +141,92 @@
   .flow-arrow { transform: rotate(90deg); padding: 4px 0; text-align: center; }
   .compat-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   CINEMATIC MICRO-INTERACTIONS — pages polish
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Filter buttons ── */
+.filter-btn {
+  transition: all .3s cubic-bezier(.16,1,.3,1) !important;
+  position: relative; overflow: hidden;
+}
+.filter-btn.active {
+  background: rgba(232,33,39,.1) !important;
+  border-color: rgba(232,33,39,.4) !important;
+  color: var(--text) !important;
+  box-shadow: 0 0 16px rgba(232,33,39,.15);
+}
+
+/* ── Shop card image zoom ── */
+.shop-img { overflow: hidden; }
+.shop-card:hover .shop-img img { transform: scale(1.08) !important; }
+
+/* ── Charge card icon glow on hover ── */
+.charge-card:hover .charge-icon {
+  background: rgba(232,33,39,.18) !important;
+  box-shadow: 0 0 20px rgba(232,33,39,.2);
+  transition: all .3s ease;
+}
+
+/* ── Energy flow step hover ── */
+.flow-step {
+  transition: border-color .3s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s !important;
+}
+.flow-step:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.08) !important;
+}
+
+/* ── Compat card overlay ── */
+.compat-card::after {
+  content: 'Configure →';
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.5); color: #fff;
+  font-size: .78rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; opacity: 0;
+  transition: opacity .3s ease;
+}
+.compat-card:hover::after { opacity: 1; }
+
+/* ── Page hero content stagger ── */
+.page-hero-content .page-eyebrow,
+.page-hero-content h1,
+.page-hero-content p {
+  opacity: 0; transform: translateY(20px);
+  animation: heroReveal .8s ease forwards;
+}
+.page-hero-content .page-eyebrow { animation-delay: .2s; }
+.page-hero-content h1            { animation-delay: .38s; }
+.page-hero-content p             { animation-delay: .54s; }
+
+/* ── Stat items count-up shimmer ── */
+.stat-item { transition: background .3s; }
+.stat-item:hover { background: rgba(255,255,255,.02); }
+
+/* ── Sign in form focus glow ── */
+.form-group input:focus {
+  border-color: rgba(62,155,255,.5) !important;
+  box-shadow: 0 0 0 3px rgba(62,155,255,.08);
+}
+
+/* ── Page section title accent ── */
+.page-section-title {
+  position: relative; padding-bottom: 16px;
+}
+.page-section-title::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 40px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  box-shadow: 0 0 10px rgba(232,33,39,.4);
+}
+
+/* ── Mission block quote glow ── */
+.mission-block p {
+  text-shadow: 0 0 60px rgba(62,155,255,.08);
+}
+
+/* ── Charge speed highlight ── */
+.charge-speed strong {
+  color: var(--accent2, #3e9bff) !important;
+}

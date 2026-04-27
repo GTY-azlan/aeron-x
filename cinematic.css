@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════════════════════
+   CINEMATIC.CSS — Premium cinematic layer for Aeron X
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Intro / Experience Screen ── */
+#intro-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity .8s ease, visibility .8s ease;
+}
+#intro-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.intro-logo {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 2rem; font-weight: 800; letter-spacing: .18em;
+  text-transform: uppercase; color: #fff; margin-bottom: 48px;
+  opacity: 0; transform: translateY(16px);
+  animation: introFadeUp .9s .3s ease forwards;
+}
+.intro-logo svg { color: #e82127; width: 36px; height: 36px; }
+
+.intro-tagline {
+  font-size: .85rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(255,255,255,.35); margin-bottom: 64px;
+  opacity: 0; animation: introFadeUp .9s .55s ease forwards;
+}
+
+.intro-start-btn {
+  padding: 16px 56px; background: transparent;
+  border: 1px solid rgba(255,255,255,.3); color: #fff;
+  font-size: .82rem; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; cursor: pointer; font-family: 'Inter', sans-serif;
+  position: relative; overflow: hidden;
+  opacity: 0; animation: introFadeUp .9s .8s ease forwards;
+  transition: border-color .3s, color .3s;
+}
+.intro-start-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: #fff; transform: scaleX(0); transform-origin: left;
+  transition: transform .4s ease; z-index: -1;
+}
+.intro-start-btn:hover { color: #000; border-color: #fff; }
+.intro-start-btn:hover::before { transform: scaleX(1); }
+
+.intro-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 2px; background: var(--accent, #e82127);
+  width: 0; transition: width 2.5s linear;
+}
+
+@keyframes introFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Cinematic Transition Overlay ── */
+#cinematic-overlay {
+  position: fixed; inset: 0; z-index: 8000;
+  pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,.95) 100%);
+  transition: opacity .5s ease;
+}
+#cinematic-overlay.active { opacity: 1; pointer-events: all; }
+
+/* ── Car Click Zoom Portal ── */
+#car-portal {
+  position: fixed; inset: 0; z-index: 8500;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0;
+}
+#car-portal.active { pointer-events: all; }
+#car-portal img {
+  max-width: 80vw; max-height: 70vh; object-fit: contain;
+  transform: scale(0.3); filter: blur(8px);
+  transition: transform .7s cubic-bezier(.16,1,.3,1), filter .5s ease, opacity .4s ease;
+  opacity: 0;
+}
+#car-portal.active img {
+  transform: scale(1); filter: blur(0); opacity: 1;
+}
+
+/* ── Motion Blur on transition ── */
+.motion-blur { animation: motionBlur .4s ease forwards; }
+@keyframes motionBlur {
+  0%   { filter: blur(0); }
+  40%  { filter: blur(6px) brightness(1.3); }
+  100% { filter: blur(0); }
+}
+
+/* ── Parallax Hero ── */
+.hero-bg { will-change: transform; }
+.hero-bg img { will-change: transform; transform-origin: center center; }
+
+/* ── Cinematic Video Hero ── */
+.hero-video-wrap {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.hero-video-wrap video {
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.05); /* slight scale for parallax room */
+}
+
+/* ── Enhanced Hero Content ── */
+.hero-content .hero-eyebrow {
+  display: block; font-size: .7rem; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--accent, #e82127);
+  margin-bottom: 16px; opacity: 0;
+  animation: heroReveal .8s .2s ease forwards;
+}
+.hero-content h1 {
+  opacity: 0; animation: heroReveal .9s .4s ease forwards;
+}
+.hero-content p {
+  opacity: 0; animation: heroReveal .9s .6s ease forwards;
+}
+.hero-content .btn-primary {
+  opacity: 0; animation: heroReveal .9s .8s ease forwards;
+}
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scroll Storytelling Sections ── */
+.story-section {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 120px 60px; position: relative; overflow: hidden;
+}
+.story-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(62,155,255,.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.story-text { max-width: 520px; }
+.story-eyebrow {
+  font-size: .68rem; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--accent, #e82127); margin-bottom: 16px; display: block;
+}
+.story-title {
+  font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1.1; margin-bottom: 20px;
+}
+.story-body {
+  font-size: .95rem; color: rgba(255,255,255,.55); line-height: 1.8;
+  margin-bottom: 32px;
+}
+.story-specs {
+  display: flex; gap: 32px; margin-bottom: 36px;
+}
+.story-spec-val {
+  display: block; font-size: 2rem; font-weight: 700;
+  letter-spacing: -.03em; line-height: 1;
+}
+.story-spec-key {
+  font-size: .65rem; color: rgba(255,255,255,.4);
+  letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; display: block;
+}
+
+/* Stagger reveal for story elements */
+.story-section .story-eyebrow,
+.story-section .story-title,
+.story-section .story-body,
+.story-section .story-specs,
+.story-section .btn-primary {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.story-section.in-view .story-eyebrow { opacity: 1; transform: none; transition-delay: 0s; }
+.story-section.in-view .story-title   { opacity: 1; transform: none; transition-delay: .12s; }
+.story-section.in-view .story-body    { opacity: 1; transform: none; transition-delay: .22s; }
+.story-section.in-view .story-specs   { opacity: 1; transform: none; transition-delay: .32s; }
+.story-section.in-view .btn-primary   { opacity: 1; transform: none; transition-delay: .42s; }
+
+/* Story image side */
+.story-img {
+  flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+}
+.story-img img {
+  max-width: 100%; max-height: 60vh; object-fit: contain;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,.8));
+  transform: translateX(40px) scale(.95); opacity: 0;
+  transition: transform .9s cubic-bezier(.16,1,.3,1), opacity .7s ease;
+}
+.story-section.in-view .story-img img {
+  transform: translateX(0) scale(1); opacity: 1; transition-delay: .1s;
+}
+
+/* Floating glow behind story car */
+.story-img::after {
+  content: ''; position: absolute; width: 60%; height: 40%;
+  background: radial-gradient(ellipse, rgba(62,155,255,.12) 0%, transparent 70%);
+  bottom: 10%; left: 50%; transform: translateX(-50%);
+  pointer-events: none; filter: blur(30px);
+}
+
+/* ── Enhanced Vehicle Cards ── */
+.vehicle-card {
+  transition: border-color .4s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s !important;
+}
+.vehicle-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1) !important;
+}
+.vehicle-card img {
+  transition: transform .7s cubic-bezier(.16,1,.3,1) !important;
+}
+.vehicle-card:hover img { transform: scale(1.07) !important; }
+
+/* Card glow on hover */
+.vehicle-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(62,155,255,.06) 0%, transparent 60%);
+  opacity: 0; transition: opacity .4s; pointer-events: none;
+}
+.vehicle-card:hover::after { opacity: 1; }
+
+/* ── Cinematic Button Micro-interactions ── */
+.btn-primary, .btn-view3d, .order-btn, .shop-btn, .signin-submit {
+  position: relative; overflow: hidden;
+}
+.btn-primary::after, .btn-view3d::after, .order-btn::after,
+.shop-btn::after, .signin-submit::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+  transform: translateX(-100%); transition: transform .5s ease;
+}
+.btn-primary:hover::after, .btn-view3d:hover::after, .order-btn:hover::after,
+.shop-btn:hover::after, .signin-submit:hover::after {
+  transform: translateX(100%);
+}
+
+/* ── Glow Accent Line ── */
+.section-title::after {
+  background: linear-gradient(90deg, var(--accent, #e82127), transparent) !important;
+  width: 80px !important;
+  box-shadow: 0 0 12px rgba(232,33,39,.5);
+}
+
+/* ── Animated Stat Numbers ── */
+.stat-val { transition: color .3s; }
+.stat-item:hover .stat-val { color: var(--accent2, #3e9bff); }
+
+/* ── Cinematic Nav Enhancement ── */
+.nav {
+  transition: background .4s, box-shadow .4s;
+}
+.nav.scrolled {
+  background: rgba(5,5,5,.97) !important;
+  box-shadow: 0 1px 40px rgba(0,0,0,.6);
+}
+
+/* ── Smooth Page Transitions ── */
+body { animation: pageIn .5s ease; }
+@keyframes pageIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Ambient Glow Orbs (background atmosphere) ── */
+.ambient-orb {
+  position: fixed; border-radius: 50%; pointer-events: none;
+  filter: blur(80px); opacity: .06; z-index: 0;
+  animation: orbFloat 8s ease-in-out infinite alternate;
+}
+.ambient-orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #3e9bff, transparent);
+  top: -200px; right: -200px; animation-delay: 0s;
+}
+.ambient-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #e82127, transparent);
+  bottom: -100px; left: -100px; animation-delay: -4s;
+}
+@keyframes orbFloat {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, -30px) scale(1.1); }
+}
+
+/* ── Scroll Progress Bar ── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 9000;
+  background: linear-gradient(90deg, var(--accent, #e82127), var(--accent2, #3e9bff));
+  width: 0; transition: width .1s linear;
+  box-shadow: 0 0 8px rgba(232,33,39,.6);
+}
+
+/* ── Cinematic Viewer Enhancements ── */
+.viewer-page .info-panel {
+  animation: panelSlideIn .6s .2s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes panelSlideIn {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.color-swatch {
+  transition: transform .25s cubic-bezier(.16,1,.3,1), border-color .2s, box-shadow .3s !important;
+}
+.color-swatch:hover {
+  transform: scale(1.25) !important;
+  box-shadow: 0 0 16px rgba(255,255,255,.2) !important;
+}
+
+/* Spec value count-up shimmer */
+.spec-val, .stat-val {
+  background: linear-gradient(90deg, var(--text, #f5f5f5) 0%, rgba(255,255,255,.6) 50%, var(--text, #f5f5f5) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+/* ── Part highlight pulse ── */
+.part-btn.active {
+  animation: pulseBorder 1.5s ease infinite;
+}
+@keyframes pulseBorder {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(62,155,255,.4); }
+  50%       { box-shadow: 0 0 0 4px rgba(62,155,255,.1); }
+}
+
+/* ── Loading shimmer for cards ── */
+.vehicle-card.loading {
+  background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+  background-size: 200% auto;
+  animation: cardShimmer 1.5s linear infinite;
+}
+@keyframes cardShimmer {
+  to { background-position: -200% center; }
+}
+
+/* ── Cinematic page hero parallax ── */
+.page-hero { overflow: hidden; }
+.page-hero-bg-img {
+  position: absolute; inset: -10%; width: 120%; height: 120%;
+  object-fit: cover; will-change: transform;
+}
+
+/* ── Hover glow on page cards ── */
+.page-card, .charge-card, .shop-card {
+  transition: border-color .3s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s !important;
+}
+.page-card:hover, .charge-card:hover, .shop-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,.5) !important;
+}
+
+/* ── Sound toggle ── */
+#sound-toggle {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(10,10,10,.85); border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(12px); color: rgba(255,255,255,.5);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: color .2s, border-color .2s, transform .2s;
+}
+#sound-toggle:hover { color: #fff; border-color: rgba(255,255,255,.3); transform: scale(1.1); }
+#sound-toggle svg { width: 16px; height: 16px; }
+
+/* ── Mobile: reduce heavy effects ── */
+@media (max-width: 768px) {
+  .ambient-orb { display: none; }
+  .story-section { padding: 80px 24px; flex-direction: column; }
+  .story-img img { transform: none !important; }
+  .spec-val, .stat-val { animation: none; -webkit-text-fill-color: var(--text, #f5f5f5); }
+}
